@@ -1,0 +1,242 @@
+﻿<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attestat Imtihoni</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e1a;--surface:#111827;--card:#1a2236;--border:#2a3a5a;--accent:#3b82f6;--accent2:#60a5fa;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--text:#e2e8f0;--muted:#94a3b8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;min-height:100vh}
+.header{background:linear-gradient(135deg,#0f1729,#1a2236,#0d1520);border-bottom:1px solid var(--border);padding:20px 32px;display:flex;align-items:center;justify-content:space-between}
+.header h1{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header p{color:var(--muted);font-size:13px;margin-top:2px}
+.page{display:none;max-width:900px;margin:0 auto;padding:32px 20px}
+.page.active{display:block}
+
+/* HOME PAGE */
+.home-title{text-align:center;margin-bottom:32px}
+.home-title h2{font-family:'Playfair Display',serif;font-size:28px;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.home-title p{color:var(--muted);font-size:14px}
+.subjects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:40px}
+.subject-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.2s;text-align:center}
+.subject-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(59,130,246,0.15)}
+.subject-card .icon{font-size:32px;margin-bottom:10px}
+.subject-card .name{font-size:15px;font-weight:600;color:var(--text)}
+.subject-card .count{font-size:12px;color:var(--muted);margin-top:4px}
+.exam-banner{background:linear-gradient(135deg,#1e3a5f,#1a2236);border:1px solid #3b82f6;border-radius:16px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.exam-banner-text h3{font-size:20px;font-weight:700;color:#60a5fa;margin-bottom:6px}
+.exam-banner-text p{color:var(--muted);font-size:14px;line-height:1.6}
+.exam-banner-text ul{color:var(--muted);font-size:13px;margin-top:8px;padding-left:16px;line-height:1.8}
+.btn-start-exam{padding:14px 32px;background:linear-gradient(135deg,#3b82f6,#6366f1);border:none;border-radius:12px;color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:opacity 0.2s;white-space:nowrap}
+.btn-start-exam:hover{opacity:0.85}
+
+/* SUBJECT PAGE */
+.back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;margin-bottom:20px;transition:color 0.2s}
+.back-btn:hover{color:var(--accent2)}
+.subject-header{margin-bottom:24px}
+.subject-header h2{font-size:22px;font-weight:700;color:var(--text)}
+.subject-header p{color:var(--muted);font-size:13px;margin-top:4px}
+.progress-bar-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:24px}
+.progress-info{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px}
+.progress-bar{height:6px;background:var(--border);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#3b82f6,#a78bfa);border-radius:99px;transition:width 0.4s ease}
+.stats-row{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.stat-pill{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 16px;text-align:center;flex:1;min-width:80px}
+.stat-pill .val{font-size:20px;font-weight:700;color:var(--accent2);line-height:1}
+.stat-pill .lbl{font-size:11px;color:var(--muted);margin-top:2px}
+.timer-chip{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:13px;font-weight:600;color:var(--accent2)}
+
+/* QUESTION CARD */
+.question-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,0.3);animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.q-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:14px}
+.q-num{background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;white-space:nowrap;margin-top:2px;flex-shrink:0}
+.q-text{font-size:15px;line-height:1.6;font-weight:500;color:#f1f5f9}
+.q-subject-badge{flex-shrink:0;margin-top:2px;font-size:10px;padding:3px 8px;border-radius:5px;font-weight:700;background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.3)}
+.options{padding:16px 24px 20px;display:flex;flex-direction:column;gap:10px}
+.option-btn{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-family:inherit;font-size:14px;line-height:1.5;cursor:pointer;text-align:left;transition:all 0.2s;width:100%}
+.option-btn:hover:not(:disabled){border-color:var(--accent);background:rgba(59,130,246,0.08)}
+.option-btn:disabled{cursor:default}
+.option-btn.correct{border-color:var(--green);background:rgba(34,197,94,0.12);color:#86efac}
+.option-btn.wrong{border-color:var(--red);background:rgba(239,68,68,0.10);color:#fca5a5}
+.option-btn.reveal-correct{border-color:rgba(34,197,94,0.5);background:rgba(34,197,94,0.07);color:#86efac}
+.option-letter{width:24px;height:24px;border-radius:6px;background:var(--border);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.option-btn.correct .option-letter{background:var(--green);color:#fff}
+.option-btn.wrong .option-letter{background:var(--red);color:#fff}
+.option-btn.reveal-correct .option-letter{background:rgba(34,197,94,0.4);color:#86efac}
+.feedback{margin:0 24px 16px;padding:12px 16px;border-radius:10px;font-size:14px;font-weight:500;display:none;align-items:center;gap:10px}
+.feedback.show{display:flex}
+.feedback.correct-fb{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);color:#86efac}
+.feedback.wrong-fb{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#fca5a5}
+.q-actions{padding:0 24px 24px;display:flex;gap:10px;justify-content:flex-end}
+.btn-next{padding:10px 24px;background:linear-gradient(135deg,#3b82f6,#6366f1);border:none;border-radius:10px;color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:opacity 0.2s,transform 0.15s;display:none}
+.btn-next:hover{opacity:0.9;transform:translateY(-1px)}
+.btn-skip{padding:10px 20px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:inherit;font-size:13px;cursor:pointer;transition:all 0.2s}
+.btn-skip:hover{border-color:var(--accent);color:var(--accent2)}
+
+/* RESULT */
+.result-screen{display:none;text-align:center;padding:40px 32px}
+.result-screen.show{display:block}
+.result-emoji{font-size:72px;margin-bottom:16px}
+.result-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.result-score{font-size:64px;font-weight:700;margin:16px 0;line-height:1}
+.result-score.pass{color:#22c55e}
+.result-score.fail{color:#ef4444}
+.result-grade{font-size:22px;font-weight:700;margin-bottom:8px}
+.result-sub{color:var(--muted);font-size:15px;margin-bottom:28px}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0 32px}
+.result-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px}
+.result-box .val{font-size:28px;font-weight:700}
+.result-box .lbl{font-size:12px;color:var(--muted);margin-top:4px}
+.result-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-restart{padding:12px 28px;background:linear-gradient(135deg,#3b82f6,#6366f1);border:none;border-radius:12px;color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:opacity 0.2s}
+.btn-restart:hover{opacity:0.85}
+.btn-home{padding:12px 28px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--muted);font-family:inherit;font-size:14px;cursor:pointer;transition:all 0.2s}
+.btn-home:hover{border-color:var(--accent);color:var(--accent2)}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-state .icon{font-size:48px;margin-bottom:12px}
+/* TICKETS */
+.tickets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:8px}
+.ticket-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 12px;cursor:pointer;transition:all 0.2s;text-align:center}
+.ticket-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 20px rgba(59,130,246,0.15)}
+.ticket-card .t-num{font-size:13px;font-weight:700;color:var(--accent2);margin-bottom:4px}
+.ticket-card .t-count{font-size:11px;color:var(--muted)}
+.ticket-card .t-icon{font-size:24px;margin-bottom:6px}
+@media(max-width:600px){.header{padding:16px}.page{padding:20px 12px}.result-grid{grid-template-columns:repeat(2,1fr)}.exam-banner{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <h1>🎓 Attestat Imtihoni</h1>
+    <p>Yakuniy baholash tizimi</p>
+  </div>
+  <div class="timer-chip" id="timer" style="display:none">00:00</div>
+</div>
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+  <div style="max-width:900px;margin:0 auto;padding:32px 20px">
+    <div class="home-title">
+      <h2>Fanlarni tanlang</h2>
+      <p>Mashq qilish uchun fan tanlang yoki haqiqiy imtihonni boshlang</p>
+    </div>
+    <div class="subjects-grid" id="subjects-grid">
+      <div class="empty-state"><div class="icon">��</div><p>Fanlar yuklanmoqda...</p></div>
+    </div>
+    <div class="exam-banner">
+      <div class="exam-banner-text">
+        <h3>🏆 Haqiqiy Imtihon</h3>
+        <p>Barcha fanlardan <strong>50 ta random savol</strong> — attestat imtihoni formati</p>
+        <ul>
+          <li>55% va yuqori — <span style="color:#f59e0b">3 (Qoniqarli)</span></li>
+          <li>75% va yuqori — <span style="color:#60a5fa">4 (Yaxshi)</span></li>
+          <li>90% va yuqori — <span style="color:#22c55e">5 (A'lo)</span></li>
+        </ul>
+      </div>
+      <button class="btn-start-exam" onclick="startExam()">Imtihonni boshlash →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TICKETS PAGE -->
+<div class="page" id="page-tickets">
+  <span class="back-btn" onclick="goHome()">← Orqaga</span>
+  <div class="subject-header">
+    <h2 id="tickets-subject-name">Fan nomi</h2>
+    <p id="tickets-subject-info">0 ta savol • 0 ta bilet</p>
+  </div>
+  <div class="tickets-grid" id="tickets-grid"></div>
+</div>
+
+<!-- PRACTICE PAGE (bilet savollari) -->
+<div class="page" id="page-practice">
+  <span class="back-btn" onclick="goTickets()">← Bilетlarga qaytish</span>
+  <div class="subject-header">
+    <h2 id="practice-subject-name">Fan nomi</h2>
+    <p id="practice-subject-count">0 ta savol</p>
+  </div>
+  <div class="stats-row">
+    <div class="stat-pill"><div class="val" id="p-total">0</div><div class="lbl">Jami</div></div>
+    <div class="stat-pill"><div class="val" id="p-correct" style="color:#22c55e">0</div><div class="lbl">To'g'ri</div></div>
+    <div class="stat-pill"><div class="val" id="p-wrong" style="color:#ef4444">0</div><div class="lbl">Noto'g'ri</div></div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-info"><span id="p-progress-text">0 / 0</span><span id="p-progress-pct">0%</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="p-progress-fill" style="width:0%"></div></div>
+  </div>
+  <div class="question-card" id="practice-card">
+    <div class="q-header">
+      <span class="q-num" id="p-q-num">№1</span>
+      <span class="q-text" id="p-q-text">Yuklanmoqda...</span>
+    </div>
+    <div class="options" id="p-options"></div>
+    <div class="feedback" id="p-feedback"><span id="p-fb-icon"></span><span id="p-fb-text"></span></div>
+    <div class="q-actions">
+      <button class="btn-skip" onclick="practiceSkip()">O'tkazib yuborish ›</button>
+      <button class="btn-next" id="p-btn-next" onclick="practiceNext()" style="display:none">Keyingisi →</button>
+    </div>
+  </div>
+  <div class="result-screen" id="practice-result">
+    <div class="result-emoji" id="pr-emoji">🎉</div>
+    <div class="result-title">Mashq yakunlandi!</div>
+    <div class="result-score" id="pr-score">0%</div>
+    <div class="result-sub" id="pr-sub"></div>
+    <div class="result-grid">
+      <div class="result-box"><div class="val" id="pr-correct" style="color:#22c55e">0</div><div class="lbl">To'g'ri</div></div>
+      <div class="result-box"><div class="val" id="pr-wrong" style="color:#ef4444">0</div><div class="lbl">Noto'g'ri</div></div>
+      <div class="result-box"><div class="val" id="pr-total">0</div><div class="lbl">Jami</div></div>
+    </div>
+    <div class="result-actions">
+      <button class="btn-restart" onclick="restartPractice()">🔄 Qayta</button>
+      <button class="btn-home" onclick="goHome()">🏠 Bosh sahifa</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXAM PAGE -->
+<div class="page" id="page-exam">
+  <div class="stats-row">
+    <div class="stat-pill"><div class="val" id="e-total">50</div><div class="lbl">Jami savol</div></div>
+    <div class="stat-pill"><div class="val" id="e-correct" style="color:#22c55e">0</div><div class="lbl">To'g'ri</div></div>
+    <div class="stat-pill"><div class="val" id="e-wrong" style="color:#ef4444">0</div><div class="lbl">Noto'g'ri</div></div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-info"><span id="e-progress-text">0 / 50</span><span id="e-progress-pct">0%</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="e-progress-fill" style="width:0%"></div></div>
+  </div>
+  <div class="question-card" id="exam-card">
+    <div class="q-header">
+      <span class="q-num" id="e-q-num">№1</span>
+      <span class="q-text" id="e-q-text">Yuklanmoqda...</span>
+      <span class="q-subject-badge" id="e-q-subject"></span>
+    </div>
+    <div class="options" id="e-options"></div>
+    <div class="feedback" id="e-feedback"><span id="e-fb-icon"></span><span id="e-fb-text"></span></div>
+    <div class="q-actions">
+      <button class="btn-next" id="e-btn-next" onclick="examNext()" style="display:none">Keyingisi →</button>
+    </div>
+  </div>
+  <div class="result-screen" id="exam-result">
+    <div class="result-emoji" id="er-emoji">🎉</div>
+    <div class="result-title">Imtihon yakunlandi!</div>
+    <div class="result-score" id="er-score">0%</div>
+    <div class="result-grade" id="er-grade"></div>
+    <div class="result-sub" id="er-sub"></div>
+    <div class="result-grid">
+      <div class="result-box"><div class="val" id="er-correct" style="color:#22c55e">0</div><div class="lbl">To'g'ri</div></div>
+      <div class="result-box"><div class="val" id="er-wrong" style="color:#ef4444">0</div><div class="lbl">Noto'g'ri</div></div>
+      <div class="result-box"><div class="val" id="er-total">0</div><div class="lbl">Jami</div></div>
+    </div>
+    <div class="result-actions">
+      <button class="btn-restart" onclick="startExam()">🔄 Qayta imtihon</button>
+      <button class="btn-home" onclick="goHome()">🏠 Bosh sahifa</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
