@@ -267,15 +267,21 @@ function examSelectAnswer(qId, chosen, opts) {
   if (examAnswered) return;
   examAnswered = true;
   examAnswers[qId] = chosen;
+  const q = examQuestions[examIdx];
+  const isCorrect = chosen === q.correctAnswer;
+  if (isCorrect) examCorrect++; else examWrong++;
   const btns = document.querySelectorAll('#e-options .option-btn');
-  // Faqat tanlangan variantni highlight qilamiz (yashil emas, oddiy)
   btns.forEach((btn, i) => {
     btn.disabled = true;
-    if (opts[i] === chosen) {
-      btn.style.borderColor = '#60a5fa';
-      btn.style.background = 'rgba(59,130,246,0.15)';
-    }
+    if (opts[i] === q.correctAnswer) btn.classList.add(isCorrect && opts[i] === chosen ? 'correct' : 'reveal-correct');
+    else if (opts[i] === chosen && !isCorrect) btn.classList.add('wrong');
   });
+  const fb = document.getElementById('e-feedback');
+  fb.className = 'feedback show ' + (isCorrect ? 'correct-fb' : 'wrong-fb');
+  document.getElementById('e-fb-icon').textContent = isCorrect ? '✅' : '❌';
+  document.getElementById('e-fb-text').textContent = isCorrect ? "To'g'ri!" : "Noto'g'ri. To'g'ri javob: " + q.correctAnswer;
+  document.getElementById('e-correct').textContent = examCorrect;
+  document.getElementById('e-wrong').textContent = examWrong;
   document.getElementById('e-btn-next').style.display = 'block';
   updateExamProgress();
 }
@@ -292,15 +298,20 @@ function updateExamProgress() {
 }
 
 async function submitExam() {
-  try {
-    const res = await fetch('/api/exam/submit', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({answers: examAnswers})
-    });
-    const result = await res.json();
-    showExamResult(result);
-  } catch (e) { console.error('Natija yuklanmadi:', e); }
+  clearInterval(timerInterval);
+  // Frontend da hisoblangan natijani ishlatamiz
+  const total = examQuestions.length;
+  const pct = total ? Math.round((examCorrect / total) * 100) : 0;
+  const result = {
+    totalQuestions: total,
+    correctAnswers: examCorrect,
+    wrongAnswers: examWrong,
+    percentage: pct,
+    passed: pct >= 55,
+    grade: pct >= 90 ? 5 : pct >= 75 ? 4 : pct >= 55 ? 3 : 2,
+    gradeText: pct >= 90 ? "A'lo" : pct >= 75 ? 'Yaxshi' : pct >= 55 ? 'Qoniqarli' : 'Qoniqarsiz'
+  };
+  showExamResult(result);
 }
 
 function showExamResult(result) {
