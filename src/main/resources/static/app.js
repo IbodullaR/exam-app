@@ -107,6 +107,21 @@ function renderPracticeQuestion() {
   const q = practiceQuestions[practiceIdx];
   document.getElementById('p-q-num').textContent = 'No' + (practiceIdx + 1);
   document.getElementById('p-q-text').textContent = q.questionText;
+
+  // Qiyinlik darajasi
+  const diffLabels = {1: '🟢 Oson', 2: "🟡 O'rta", 3: '🔴 Qiyin'};
+  const diffColors = {1: '#22c55e', 2: '#f59e0b', 3: '#ef4444'};
+  let diffBadge = document.getElementById('p-diff-badge');
+  if (!diffBadge) {
+    diffBadge = document.createElement('span');
+    diffBadge.id = 'p-diff-badge';
+    diffBadge.style.cssText = 'font-size:11px;padding:3px 8px;border-radius:5px;font-weight:700;margin-left:8px;flex-shrink:0;';
+    document.getElementById('p-q-num').parentNode.appendChild(diffBadge);
+  }
+  diffBadge.textContent = diffLabels[q.difficulty] || '';
+  diffBadge.style.color = diffColors[q.difficulty] || '#94a3b8';
+  diffBadge.style.background = 'rgba(0,0,0,0.2)';
+  diffBadge.style.border = '1px solid ' + (diffColors[q.difficulty] || '#94a3b8');
   const opts = [q.optionA, q.optionB, q.optionC, q.optionD].filter(Boolean);
   const optionsEl = document.getElementById('p-options');
   optionsEl.innerHTML = '';
@@ -218,6 +233,21 @@ function renderExamQuestion() {
   document.getElementById('e-q-num').textContent = 'No' + (examIdx + 1);
   document.getElementById('e-q-text').textContent = q.questionText;
   document.getElementById('e-q-subject').textContent = q.subjectName;
+
+  // Qiyinlik darajasi
+  const diffLabels = {1: '🟢 Oson', 2: "🟡 O'rta", 3: '🔴 Qiyin'};
+  const diffColors = {1: '#22c55e', 2: '#f59e0b', 3: '#ef4444'};
+  let diffBadge = document.getElementById('e-diff-badge');
+  if (!diffBadge) {
+    diffBadge = document.createElement('span');
+    diffBadge.id = 'e-diff-badge';
+    diffBadge.style.cssText = 'font-size:11px;padding:3px 8px;border-radius:5px;font-weight:700;flex-shrink:0;';
+    document.getElementById('e-q-subject').insertAdjacentElement('afterend', diffBadge);
+  }
+  diffBadge.textContent = diffLabels[q.difficulty] || '';
+  diffBadge.style.color = diffColors[q.difficulty] || '#94a3b8';
+  diffBadge.style.background = 'rgba(0,0,0,0.2)';
+  diffBadge.style.border = '1px solid ' + (diffColors[q.difficulty] || '#94a3b8');
   const opts = [q.optionA, q.optionB, q.optionC, q.optionD].filter(Boolean);
   const optionsEl = document.getElementById('e-options');
   optionsEl.innerHTML = '';
@@ -238,7 +268,14 @@ function examSelectAnswer(qId, chosen, opts) {
   examAnswered = true;
   examAnswers[qId] = chosen;
   const btns = document.querySelectorAll('#e-options .option-btn');
-  btns.forEach((btn, i) => { btn.disabled = true; if (opts[i] === chosen) btn.classList.add('correct'); });
+  // Faqat tanlangan variantni highlight qilamiz (yashil emas, oddiy)
+  btns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (opts[i] === chosen) {
+      btn.style.borderColor = '#60a5fa';
+      btn.style.background = 'rgba(59,130,246,0.15)';
+    }
+  });
   document.getElementById('e-btn-next').style.display = 'block';
   updateExamProgress();
 }
