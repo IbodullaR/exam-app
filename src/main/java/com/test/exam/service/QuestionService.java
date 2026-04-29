@@ -58,6 +58,7 @@ public class QuestionService {
         dto.setOptionC(q.getOptionC());
         dto.setOptionD(q.getOptionD());
         dto.setDifficulty(q.getDifficulty());
+        dto.setCorrectAnswer(q.getCorrectAnswer());
         return dto;
     }
 }

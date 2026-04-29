@@ -13,4 +13,5 @@ public class QuestionDto {
     private String optionC;
     private String optionD;
     private Integer difficulty;
+    private String correctAnswer;
 }
