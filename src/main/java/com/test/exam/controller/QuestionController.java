@@ -33,7 +33,7 @@ public class QuestionController {
         return questionService.getAll();
     }
 
-    @GetMapping("/by-subject/{subjectId}")
+    @GetMapping("/subject/{subjectId}")
     @Operation(summary = "Fan bo'yicha savollarni olish")
     public List<QuestionDto> getBySubject(@PathVariable Long subjectId) {
         return questionService.getBySubject(subjectId);
@@ -48,7 +48,7 @@ public class QuestionController {
     @PostMapping("/bulk")
     @Operation(summary = "Ko'plab savollarni bir vaqtda qo'shish")
     public List<QuestionDto> createBulk(@RequestBody List<QuestionCreateDto> dtos) {
-        return dtos.stream().map(questionService::create).toList();
+        return questionService.createBulk(dtos);
     }
 
     @DeleteMapping("/{id}")
